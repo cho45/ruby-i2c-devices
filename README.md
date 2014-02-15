@@ -30,3 +30,14 @@ lcd = ACM1602NI.new
 
 lcd.put_line(0, "0123456789ABCDEF")
 ```
+
+REQUIREMENTS
+============
+
+Currently this library depends on Linux's i2c-dev.
+
+TODO
+====
+
+ * with GPIO
+ * More supported devices
