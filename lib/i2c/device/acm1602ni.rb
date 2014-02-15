@@ -15,8 +15,8 @@ class ACM1602NI < I2CDevice
 		].transpose
 	]
 
-	def initialize
-		super(0x50)
+	def initialize(address=0x50, path=nil)
+		super
 		@lines = []
 		initialize_lcd
 	end

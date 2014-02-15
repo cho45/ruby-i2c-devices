@@ -1,6 +1,9 @@
 class I2CDevice
 	VERSION = "0.0.1"
 
+	class I2CException < Exception; end
+	class I2CIOError < I2CException; end
+
 	# ioctl command
 	# Ref. https://www.kernel.org/pub/linux/kernel/people/marcelo/linux-2.4/include/linux/i2c.h
 	I2C_RETRIES     = 0x0701
@@ -16,7 +19,15 @@ class I2CDevice
 
 	attr_accessor :address
 
-	def initialize(address, path="/dev/i2c-1")
+	def initialize(address, path=nil)
+		if path.nil?
+			path = Dir.glob("/dev/i2c-*").sort.last
+		end
+
+		unless File.exist?(path)
+			raise I2CIOError, "/dev/i2c-0 is required"
+		end
+
 		@path = path
 		@address = address
 	end
