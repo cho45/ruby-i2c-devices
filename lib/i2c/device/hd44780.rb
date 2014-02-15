@@ -36,9 +36,9 @@ class HD44780 < I2CDevice
 		if force || str != @lines[line]
 			# set ddram address
 			set_ddram_address(0x40 * line)
-			sleep 53e-6
+			sleep 60e-6
 			i2cset(*str.unpack("C*").map {|i| [0x80, i] }.flatten)
-			sleep 53e-6
+			sleep 60e-6
 		end
 		@lines[line] = str
 	end
@@ -62,9 +62,9 @@ class HD44780 < I2CDevice
 			i.inject {|r,i| (r << 1) + i }
 		}
 		set_cgram_address(8 * n)
-		sleep 53e-6
+		sleep 60e-6
 		i2cset(*array.map {|i| [0x80, i] }.flatten)
-		sleep 53e-6
+		sleep 60e-6
 	end
 
 	def clear
@@ -86,7 +86,7 @@ class HD44780 < I2CDevice
 	# s   : shift entire display: 1: left, 0: right
 	def entry_mode_set(i_d, s)
 		i2cset(0, 0b00000100 | (i_d<<1) | (s))
-		sleep 37e-6
+		sleep 60e-6
 	end
 
 	# d: set entire display on/off
@@ -94,12 +94,12 @@ class HD44780 < I2CDevice
 	# b: blink cursor
 	def display_on_off_control(d, c, b)
 		i2cset(0, 0b00001000 | (d<<2) | (c<<1) | (b))
-		sleep 37e-6
+		sleep 60e-6
 	end
 
 	def cursor_or_display_shift(s_c, r_l)
 		i2cset(0, 0b00010000 | (s_c<<3) | (r_l<<2))
-		sleep 37e-6
+		sleep 60e-6
 	end
 
 	# dl  data_length: 1: 8bit, 0: 4bit
@@ -107,19 +107,19 @@ class HD44780 < I2CDevice
 	# f   character_font: 1: double font, 0: normal
 	def function_set(dl, n, f)
 		i2cset(0, 0b00100000 | (dl<<4) | (n<<3) | (f<<2))
-		sleep 37e-6
+		sleep 60e-6
 	end
 
 	def set_cgram_address(address)
-		address = address & 0b0011111
+		address = address & 0b00111111
 		i2cset(0, 0b01000000 | address)
-		sleep 37e-6
+		sleep 60e-6
 	end
 
 	def set_ddram_address(address)
-		address = address & 0b0111111
+		address = address & 0b01111111
 		i2cset(0, 0b10000000 | address)
-		sleep 37e-6
+		sleep 60e-6
 	end
 
 	def read_busy_flag_and_address
