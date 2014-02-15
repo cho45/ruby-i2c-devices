@@ -23,6 +23,11 @@ class HD44780 < I2CDevice
 
 	def initialize_lcd
 		function_set(1, 1, 0)
+		sleep 4.1e-3
+		function_set(1, 1, 0)
+		sleep 100e-6
+		function_set(1, 1, 0)
+		function_set(1, 1, 0)
 		display_on_off_control(1, 0, 0)
 		clear
 	end

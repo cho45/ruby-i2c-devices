@@ -7,17 +7,31 @@ require "tempfile"
 
 describe I2CDevice do
 	before do
-		@temp = Tempfile.new("i2c")
-		file = File.open(@temp.path, "r+")
-		File.stub(:open).and_return(file)
-		file.stub(:ioctl) do |cmd, arg|
-			@ioctl = { cmd: cmd, arg: arg }
+		@i2cout = ""
+		@i2cin  = ""
+		@ioctl  = nil
+
+		ioctl = proc do |cmd, arg|
+			@ioctl = [ cmd, arg ]
 		end
-		file.stub(:syswrite) do |str|
-			@i2cout = str
+
+		syswrite = proc do |str|
+			@i2cout << str
 		end
-		file.stub(:sysread) do
+
+		sysread = proc do |n|
 			@i2cin
+		end
+
+		@temp = Tempfile.new("i2c")
+		file = nil
+		open = File.method(:open)
+		File.stub(:open) do
+			file = open.call(@temp.path, "r+")
+			file.define_singleton_method(:ioctl) {|cmd,arg| ioctl.call(cmd, arg) }
+			file.define_singleton_method(:syswrite) {|str| syswrite.call(str) }
+			file.define_singleton_method(:sysread) {|n| sysread.call(n) }
+			file
 		end
 	end
 
@@ -27,7 +41,7 @@ describe I2CDevice do
 
 			i2c.i2cset(0x00)
 
-			expect(@ioctl).to eq({ cmd: I2CDevice::I2C_SLAVE, arg: 0x10 })
+			expect(@ioctl).to eq([ I2CDevice::I2C_SLAVE, 0x10 ])
 			expect(@i2cout).to eq("\x00")
 		end
 
@@ -36,7 +50,7 @@ describe I2CDevice do
 
 			i2c.i2cset(0x00, 0x01, 0x02)
 
-			expect(@ioctl).to eq({ cmd: I2CDevice::I2C_SLAVE, arg: 0x10 })
+			expect(@ioctl).to eq([ I2CDevice::I2C_SLAVE, 0x10 ])
 			expect(@i2cout).to eq("\x00\x01\x02")
 		end
 	end
@@ -51,7 +65,7 @@ describe I2CDevice do
 
 			expect(ret).to eq("\x01")
 
-			expect(@ioctl).to eq({ cmd: I2CDevice::I2C_SLAVE, arg: 0x10 })
+			expect(@ioctl).to eq([ I2CDevice::I2C_SLAVE, 0x10 ])
 			expect(@i2cout).to eq("\x00")
 		end
 
@@ -64,7 +78,7 @@ describe I2CDevice do
 
 			expect(ret).to eq("\x01\x02\x03")
 
-			expect(@ioctl).to eq({ cmd: I2CDevice::I2C_SLAVE, arg: 0x10 })
+			expect(@ioctl).to eq([ I2CDevice::I2C_SLAVE, 0x10 ])
 			expect(@i2cout).to eq("\x00")
 		end
 	end
