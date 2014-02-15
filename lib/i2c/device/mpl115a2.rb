@@ -3,6 +3,7 @@ require "i2c"
 
 class MPL115A2 < I2CDevice
 	def initialize(address=0x60, path=nil)
+		super
 		coefficient = i2cget(0x04, 8).unpack("n*")
 
 		@a0  = fixed_point(coefficient[0], 12)
