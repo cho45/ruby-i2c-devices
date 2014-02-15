@@ -1,4 +1,6 @@
 class I2CDevice
+	VERSION = "0.0.1"
+
 	# ioctl command
 	# Ref. https://www.kernel.org/pub/linux/kernel/people/marcelo/linux-2.4/include/linux/i2c.h
 	I2C_RETRIES     = 0x0701
