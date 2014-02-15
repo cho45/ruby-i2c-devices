@@ -36,7 +36,7 @@ class I2CDevice
 		i2c = File.open(@path, "r+")
 		i2c.ioctl(I2C_SLAVE, @address)
 		i2c.syswrite(address.chr)
-		ret = i2c.read(length)
+		ret = i2c.sysread(length)
 		i2c.close
 		ret
 	end
