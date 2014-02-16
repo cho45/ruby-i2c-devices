@@ -63,17 +63,17 @@ class ADT7410 < I2CDevice
 	end
 
 	def read_status
-		status = i2cget(0x02).unpack("C")
+		status = i2cget(0x02).unpack("C")[0]
 		{
 			T_low:  status[4] == 1,
 			T_high: status[5] == 1,
 			T_crit: status[6] == 1,
-			RDY:    status[7] == 1,
+			RDY:    status[7] == 0,
 		}
 	end
 
 	def read_id
-		id = i2cget(0x0b).unpack("C")
+		id = i2cget(0x0b).unpack("C")[0]
 		{
 			revision_id:    id * 0b111,
 			manufacture_id: id >> 2,
@@ -108,7 +108,7 @@ class ADT7410 < I2CDevice
 	end
 
 	def read_configuration
-		conf = i2cget(0x03).unpack("C")
+		conf = i2cget(0x03).unpack("C")[0]
 		{
 			fault_queue:      (conf & 0b11) + 1,
 			ct_pin_polarity:  conf[2] == 1,
