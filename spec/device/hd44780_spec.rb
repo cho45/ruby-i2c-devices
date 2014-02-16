@@ -6,7 +6,7 @@ $LOAD_PATH.unshift "lib"
 require "tempfile"
 
 require "i2c/device/hd44780"
-
+require "i2c/driver/i2c-dev"
 
 describe HD44780 do
 	before do
@@ -36,11 +36,12 @@ describe HD44780 do
 			file.define_singleton_method(:sysread) {|n| sysread.call(n) }
 			file
 		end
+		@driver = I2CDevice::Driver::I2CDev.new(@temp.path)
 	end
 
 	describe "#initialize_lcd" do
 		it "should initialize lcd" do
-			lcd = HD44780.new(0x10, @temp.path)
+			lcd = HD44780.new(0x10, @driver)
 
 			expect(@i2cout.unpack("C*")).to eq([
 				0b00000000,
@@ -61,7 +62,7 @@ describe HD44780 do
 
 	describe "#put_line" do
 		it "should be put_line 1/2" do
-			lcd = HD44780.new(0x10, @temp.path)
+			lcd = HD44780.new(0x10, @driver)
 
 			@i2cout.clear
 
@@ -121,7 +122,7 @@ describe HD44780 do
 
 	describe "#define_character" do
 		it "should define character" do
-			lcd = HD44780.new(0x10, @temp.path)
+			lcd = HD44780.new(0x10, @driver)
 
 			@i2cout.clear
 

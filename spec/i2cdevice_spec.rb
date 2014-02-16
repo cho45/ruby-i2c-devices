@@ -3,6 +3,7 @@
 $LOAD_PATH.unshift "lib"
 
 require "i2c"
+require "i2c/driver/i2c-dev"
 require "tempfile"
 
 describe I2CDevice do
@@ -33,31 +34,33 @@ describe I2CDevice do
 			file.define_singleton_method(:sysread) {|n| sysread.call(n) }
 			file
 		end
+
+		@driver = I2CDevice::Driver::I2CDev.new(@temp.path)
 	end
 
 	describe "#i2cset" do
 		it "should be write 1 byte" do
-			i2c = I2CDevice.new(0x10, @temp.path)
+			i2c = I2CDevice.new(0x10, @driver)
 
 			i2c.i2cset(0x00)
 
-			expect(@ioctl).to eq([ I2CDevice::I2C_SLAVE, 0x10 ])
+			expect(@ioctl).to eq([ I2CDevice::Driver::I2CDev::I2C_SLAVE, 0x10 ])
 			expect(@i2cout).to eq("\x00")
 		end
 
 		it "should be write multi bytes" do
-			i2c = I2CDevice.new(0x10, @temp.path)
+			i2c = I2CDevice.new(0x10, @driver)
 
 			i2c.i2cset(0x00, 0x01, 0x02)
 
-			expect(@ioctl).to eq([ I2CDevice::I2C_SLAVE, 0x10 ])
+			expect(@ioctl).to eq([ I2CDevice::Driver::I2CDev::I2C_SLAVE, 0x10 ])
 			expect(@i2cout).to eq("\x00\x01\x02")
 		end
 	end
 
 	describe "#i2cget" do
 		it "should be read 1 byte" do
-			i2c = I2CDevice.new(0x10, @temp.path)
+			i2c = I2CDevice.new(0x10, @driver)
 
 			@i2cin = "\x01"
 
@@ -65,12 +68,12 @@ describe I2CDevice do
 
 			expect(ret).to eq("\x01")
 
-			expect(@ioctl).to eq([ I2CDevice::I2C_SLAVE, 0x10 ])
+			expect(@ioctl).to eq([ I2CDevice::Driver::I2CDev::I2C_SLAVE, 0x10 ])
 			expect(@i2cout).to eq("\x00")
 		end
 
 		it "should be read multi byte" do
-			i2c = I2CDevice.new(0x10, @temp.path)
+			i2c = I2CDevice.new(0x10, @driver)
 
 			@i2cin = "\x01\x02\x03"
 
@@ -78,7 +81,7 @@ describe I2CDevice do
 
 			expect(ret).to eq("\x01\x02\x03")
 
-			expect(@ioctl).to eq([ I2CDevice::I2C_SLAVE, 0x10 ])
+			expect(@ioctl).to eq([ I2CDevice::Driver::I2CDev::I2C_SLAVE, 0x10 ])
 			expect(@i2cout).to eq("\x00")
 		end
 	end
