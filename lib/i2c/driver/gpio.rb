@@ -50,7 +50,6 @@ module I2CDevice::Driver
 			@scl = opts[:scl] or raise "opts[:scl] = [gpio pin number] is requied"
 			@speed = opts[:speed] || 100 # kHz but insane
 			@clock = 1.0 / (@speed * 1000)
-			@state = :wait
 
 			GPIO.export(@scl)
 			GPIO.export(@sda)
@@ -93,7 +92,6 @@ module I2CDevice::Driver
 		private
 
 		def start_condition
-			@state = :started
 			GPIO.direction(@sda, :high)
 			GPIO.direction(@scl, :high)
 			sleep @clock
@@ -107,7 +105,6 @@ module I2CDevice::Driver
 			sleep @clock
 			GPIO.write(@sda, true)
 			sleep @clock
-			@state = :wait
 		end
 
 		def write(byte)
