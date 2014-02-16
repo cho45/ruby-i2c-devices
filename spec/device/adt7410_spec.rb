@@ -20,7 +20,7 @@ describe ADT7410 do
 		context "16bit" do
 			it "should treat positive fractial value" do
 				# status
-				@mock.memory[0x02] = 0b10000000
+				@mock.memory[0x02] = 0b00000000
 				# temp
 				@mock.memory[0x00] = 0b00000000
 				@mock.memory[0x01] = 0b00000001
@@ -39,7 +39,7 @@ describe ADT7410 do
 
 			it "should treat negative value" do
 				# status
-				@mock.memory[0x02] = 0b10000000
+				@mock.memory[0x02] = 0b00000000
 				# temp
 				@mock.memory[0x00] = 0b10000000
 				@mock.memory[0x01] = 0b00000000
@@ -52,7 +52,7 @@ describe ADT7410 do
 		context "13bit" do
 			it "should treat positive fractial value" do
 				# status
-				@mock.memory[0x02] = 0b10000000
+				@mock.memory[0x02] = 0b00000000
 				# temp
 				@mock.memory[0x00] = 0b00000000
 				@mock.memory[0x01] = 0b00001000
@@ -67,7 +67,7 @@ describe ADT7410 do
 
 			it "should treat negative value" do
 				# status
-				@mock.memory[0x02] = 0b10000000
+				@mock.memory[0x02] = 0b00000000
 				# temp
 				@mock.memory[0x00] = 0b11100100
 				@mock.memory[0x01] = 0b10000000
