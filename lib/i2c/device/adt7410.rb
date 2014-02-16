@@ -28,7 +28,7 @@ class ADT7410 < I2CDevice
 	end
 
 	def calculate_temperature
-		while read_status[:RDY]
+		until read_status[:RDY]
 			case @configuration[:operation_mode]
 			when :continuous_conversion
 				sleep 60e-3
