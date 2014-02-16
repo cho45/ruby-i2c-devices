@@ -136,8 +136,8 @@ module I2CDevice::Driver
 		def read(ack=true)
 			ret = 0
 
-			GPIO.direction(@sda, :in)
 			GPIO.direction(@scl, :low)
+			GPIO.direction(@sda, :in)
 
 			8.times do
 				GPIO.write(@scl, true)
