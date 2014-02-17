@@ -11,7 +11,7 @@ Usage of I2CDevice class directly:
 ```
 require "i2c"
 
-device = I2CDevice.new(0x60, "/dev/i2c-0")
+device = I2CDevice.new(address: 0x60, driver: I2CDevice::Driver::I2CDev.new("/dev/i2c-1"))
 
 # like i2c-tools's i2cget command
 device.i2cget(0x01)
