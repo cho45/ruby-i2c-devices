@@ -22,7 +22,7 @@ class ADT7410 < I2CDevice
 
 	attr_reader :configuration
 
-	def initialize(address, path)
+	def initialize(args)
 		super
 		configuration({})
 	end

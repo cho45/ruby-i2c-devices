@@ -40,7 +40,7 @@ describe I2CDevice do
 
 	describe "#i2cset" do
 		it "should be write 1 byte" do
-			i2c = I2CDevice.new(0x10, @driver)
+			i2c = I2CDevice.new(address: 0x10, driver: @driver)
 
 			i2c.i2cset(0x00)
 
@@ -49,7 +49,7 @@ describe I2CDevice do
 		end
 
 		it "should be write multi bytes" do
-			i2c = I2CDevice.new(0x10, @driver)
+			i2c = I2CDevice.new(address: 0x10, driver: @driver)
 
 			i2c.i2cset(0x00, 0x01, 0x02)
 
@@ -60,7 +60,7 @@ describe I2CDevice do
 
 	describe "#i2cget" do
 		it "should be read 1 byte" do
-			i2c = I2CDevice.new(0x10, @driver)
+			i2c = I2CDevice.new(address: 0x10, driver: @driver)
 
 			@i2cin = "\x01"
 
@@ -73,7 +73,7 @@ describe I2CDevice do
 		end
 
 		it "should be read multi byte" do
-			i2c = I2CDevice.new(0x10, @driver)
+			i2c = I2CDevice.new(address: 0x10, driver: @driver)
 
 			@i2cin = "\x01\x02\x03"
 

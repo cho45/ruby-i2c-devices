@@ -15,7 +15,7 @@ class HD44780 < I2CDevice
 		].transpose
 	]
 
-	def initialize(address, path=nil)
+	def initialize(args)
 		super
 		@lines = []
 		initialize_lcd

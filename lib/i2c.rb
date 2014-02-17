@@ -6,14 +6,14 @@ class I2CDevice
 
 	attr_accessor :address
 
-	def initialize(address, driver=nil)
-		if driver.nil?
+	def initialize(args)
+		if args[:driver].nil?
 			require "i2c/driver/i2c-dev"
-			driver = I2CDevice::Driver::I2CDev.new
+			args[:driver] = I2CDevice::Driver::I2CDev.new
 		end
 
-		@driver = driver
-		@address = address
+		@driver  = args[:driver]
+		@address = args[:address] or raise I2CException, "args[:address] required"
 	end
 
 	def i2cget(param, length=1)
