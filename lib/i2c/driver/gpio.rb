@@ -127,7 +127,6 @@ module I2CDevice::Driver
 				sleep @clock
 			end
 
-			GPIO.write(@sda, true)
 			GPIO.direction(@sda, :in)
 			GPIO.write(@scl, true)
 			sleep @clock / 2.0
