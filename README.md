@@ -62,6 +62,9 @@ REQUIREMENTS
 
 Currently this library depends on Linux's i2c-dev or sysfs with GPIO.
 
+ * /dev/i2c-0 (i2c-dev)
+ * /sys/class/gpio (GPIO)
+
 TODO
 ====
 
