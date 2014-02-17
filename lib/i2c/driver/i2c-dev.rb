@@ -35,6 +35,8 @@ module I2CDevice::Driver
 			ret = i2c.sysread(length)
 			i2c.close
 			ret
+		rescue Errno::EIO => e
+			raise I2CDevice::I2CIOError, e.message
 		end
 
 		def i2cset(address, *data)
@@ -42,6 +44,8 @@ module I2CDevice::Driver
 			i2c.ioctl(I2C_SLAVE, address)
 			i2c.syswrite(data.pack("C*"))
 			i2c.close
+		rescue Errno::EIO => e
+			raise I2CDevice::I2CIOError, e.message
 		end
 	end
 end

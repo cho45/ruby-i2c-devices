@@ -11,4 +11,7 @@ mpl = MPL115A2.new(driver: I2CDevice::Driver::GPIO.new(
 ))
 
 p mpl.calculate_hPa
+p mpl.calculate_hPa
+p mpl.calculate_hPa
+p mpl.calculate_hPa
 
