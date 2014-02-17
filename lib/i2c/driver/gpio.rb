@@ -65,10 +65,15 @@ module I2CDevice::Driver
 		def i2cget(address, param, length=1)
 			ret = ""
 			start_condition
-			write( (address << 1) + 0)
+			unless write( (address << 1) + 0)
+				raise I2CDevice::I2CIOError, "Unknown slave device (address:#{address})"
+			end
 			write(param)
 			start_condition
 			write( (address << 1) + 1)
+			unless write( (address << 1) + 0)
+				raise I2CDevice::I2CIOError, "Unknown slave device (address:#{address})"
+			end
 			length.times do |n|
 				ret << read(n != length - 1).chr
 			end
@@ -80,6 +85,9 @@ module I2CDevice::Driver
 			sent = 0
 			start_condition
 			write( (address << 1) + 0)
+			unless write( (address << 1) + 0)
+				raise I2CDevice::I2CIOError, "Unknown slave device (address:#{address})"
+			end
 			data.each do |c|
 				sent += 1
 				unless write(c)
