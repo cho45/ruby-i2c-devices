@@ -3,10 +3,11 @@ class I2CDevice
 
 	class I2CException < Exception; end
 	class I2CIOError < I2CException; end
+	class I2CBUSBusy < I2CIOError; end
 
 	attr_accessor :address
 
-	def initialize(args)
+	def initialize(args={})
 		if args[:driver].nil?
 			require "i2c/driver/i2c-dev"
 			args[:driver] = I2CDevice::Driver::I2CDev.new

@@ -2,7 +2,7 @@
 require "i2c"
 
 class MPL115A2 < I2CDevice
-	def initialize(args)
+	def initialize(args={})
 		args[:address] = 0x60
 		super
 		coefficient = i2cget(0x04, 8).unpack("n*")

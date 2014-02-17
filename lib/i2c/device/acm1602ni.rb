@@ -5,7 +5,7 @@ require "i2c/device/hd44780"
 # Note: This device only run under speed=50kHz
 # http://akizukidenshi.com/catalog/g/gP-05693/
 class ACM1602NI < HD44780
-	def initialize(args)
+	def initialize(args={})
 		args[:address] ||= 0x50
 		super
 		@lines = []

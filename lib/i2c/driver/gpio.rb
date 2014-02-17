@@ -92,6 +92,11 @@ module I2CDevice::Driver
 		private
 
 		def start_condition
+			GPIO.direction(@scl, :in)
+			if GPIO.read(@scl) == false
+				raise I2CDevice::I2BUSBusy, "BUS is busy"
+			end
+
 			GPIO.direction(@sda, :high)
 			GPIO.direction(@scl, :high)
 			sleep @clock
