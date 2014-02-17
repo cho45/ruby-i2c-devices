@@ -8,32 +8,32 @@ module I2CDevice::Driver
 	class GPIO
 		def self.export(pin)
 			File.open("/sys/class/gpio/export", "w") do |f|
-				f.write(pin)
+				f.syswrite(pin)
 			end
 		end
 
 		def self.unexport(pin)
 			File.open("/sys/class/gpio/unexport", "w") do |f|
-				f.write(pin)
+				f.syswrite(pin)
 			end
 		end
 
 		def self.direction(pin, direction)
-			[:in, :out, :high, :low].include?(direction) or raise "direction must be :in or :out"
+			# [:in, :out, :high, :low].include?(direction) or raise "direction must be :in, :out, :high or :low"
 			File.open("/sys/class/gpio/gpio#{pin}/direction", "w") do |f|
-				f.write(direction)
+				f.syswrite(direction)
 			end
 		end
 
 		def self.read(pin)
 			File.open("/sys/class/gpio/gpio#{pin}/value", "r") do |f|
-				f.read.to_i
+				f.sysread(1).to_i
 			end
 		end
 
 		def self.write(pin, val)
 			File.open("/sys/class/gpio/gpio#{pin}/value", "w") do |f|
-				f.write(val ? "1" : "0")
+				f.syswrite(val ? "1" : "0")
 			end
 		end
 
@@ -118,9 +118,12 @@ module I2CDevice::Driver
 
 			7.downto(0) do |n|
 				GPIO.write(@sda, byte[n] == 1)
-				GPIO.write(@scl, true)
+				GPIO.direction(@scl, :in)
+				until GPIO.read(@scl) == 1
+					# clock streching
+				end
 				sleep @clock
-				GPIO.write(@scl, false)
+				GPIO.direction(@scl, :low)
 				sleep @clock
 			end
 
@@ -145,11 +148,11 @@ module I2CDevice::Driver
 			GPIO.direction(@sda, :in)
 
 			8.times do
-				GPIO.write(@scl, true)
+				GPIO.direction(@scl, :in)
 				sleep @clock / 2.0
 				ret = (ret << 1) | GPIO.read(@sda)
 				sleep @clock / 2.0
-				GPIO.write(@scl, false)
+				GPIO.direction(@scl, :low)
 				sleep @clock
 			end
 

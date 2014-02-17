@@ -10,8 +10,7 @@ mpl = MPL115A2.new(driver: I2CDevice::Driver::GPIO.new(
 	scl: 24, # pin 18 in raspberry pi
 ))
 
-p mpl.calculate_hPa
-p mpl.calculate_hPa
-p mpl.calculate_hPa
-p mpl.calculate_hPa
+loop do
+	p mpl.calculate_hPa
+end
 
