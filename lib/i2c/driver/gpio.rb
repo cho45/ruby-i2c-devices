@@ -6,6 +6,8 @@ THIS MODULE WORKS WITH VERY SLOW SPEED ABOUT JUST 1kHz (normaly 100kHz).
 
 module I2CDevice::Driver
 	class GPIO
+		@@DEBUG = false
+
 		def self.export(pin)
 			File.open("/sys/class/gpio/export", "w") do |f|
 				f.syswrite(pin)
@@ -73,28 +75,26 @@ module I2CDevice::Driver
 			ret = ""
 			start_condition
 			unless write( (address << 1) + 0)
-				stop_condition
 				raise I2CDevice::I2CIOError, "Unknown slave device (address:#{address})"
 			end
 			write(param)
 			stop_condition
 			start_condition
 			unless write( (address << 1) + 1)
-				stop_condition
 				raise I2CDevice::I2CIOError, "Unknown slave device (address:#{address})"
 			end
 			length.times do |n|
 				ret << read(n != length - 1).chr
 			end
-			stop_condition
 			ret
+		ensure
+			stop_condition
 		end
 
 		def i2cset(address, *data)
 			sent = 0
 			start_condition
 			unless write( (address << 1) + 0)
-				stop_condition
 				raise I2CDevice::I2CIOError, "Unknown slave device (address:#{address})"
 			end
 			data.each do |c|
@@ -103,13 +103,15 @@ module I2CDevice::Driver
 					break
 				end
 			end
-			stop_condition
 			sent
+		ensure
+			stop_condition
 		end
 
 		private
 
 		def start_condition
+			p :start_condition if @@DEBUG
 			sleep @clock
 			GPIO.direction(@sda, :in)
 			GPIO.direction(@scl, :in)
@@ -125,6 +127,7 @@ module I2CDevice::Driver
 		end
 
 		def stop_condition
+			p :stop_condition if @@DEBUG
 			GPIO.direction(@scl, :low)
 			sleep @clock / 2
 			GPIO.direction(@sda, :low)
@@ -136,6 +139,7 @@ module I2CDevice::Driver
 		end
 
 		def write(byte)
+			p [:write, byte] if @@DEBUG
 			GPIO.direction(@scl, :low)
 			sleep @clock
 
@@ -165,6 +169,7 @@ module I2CDevice::Driver
 		end
 
 		def read(ack=true)
+			p [:read, ack] if @@DEBUG
 			ret = 0
 
 			GPIO.direction(@scl, :low)
