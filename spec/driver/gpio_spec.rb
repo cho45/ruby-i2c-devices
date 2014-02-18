@@ -488,7 +488,6 @@ describe I2CDevice::Driver::GPIO do
 
 					expect(@timeline.state(@driver.scl)).to be(1)
 					expect(@timeline.state(@driver.sda)).to be(1)
-					@timeline.dump
 				end
 
 				it "should works with length argument" do

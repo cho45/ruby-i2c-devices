@@ -60,6 +60,8 @@ module I2CDevice::Driver
 			end
 			ObjectSpace.define_finalizer(self, self.class.finalizer([@scl, @sda]))
 			begin
+				GPIO.direction(@sda, :high)
+				GPIO.direction(@scl, :high)
 				GPIO.direction(@sda, :in)
 				GPIO.direction(@scl, :in)
 			rescue Errno::EACCES => e # writing to gpio after export is failed in a while
@@ -75,6 +77,7 @@ module I2CDevice::Driver
 				raise I2CDevice::I2CIOError, "Unknown slave device (address:#{address})"
 			end
 			write(param)
+			stop_condition
 			start_condition
 			unless write( (address << 1) + 1)
 				stop_condition
@@ -137,10 +140,11 @@ module I2CDevice::Driver
 			sleep @clock
 
 			7.downto(0) do |n|
-				GPIO.write(@sda, byte[n] == 1)
+				GPIO.direction(@sda, byte[n] == 1 ? :high : :low)
 				GPIO.direction(@scl, :in)
 				until GPIO.read(@scl) == 1
 					# clock streching
+					sleep @clock
 				end
 				sleep @clock
 				GPIO.direction(@scl, :low)
