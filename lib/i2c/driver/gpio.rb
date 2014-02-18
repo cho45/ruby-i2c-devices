@@ -98,10 +98,10 @@ module I2CDevice::Driver
 				raise I2CDevice::I2CIOError, "Unknown slave device (address:#{address})"
 			end
 			data.each do |c|
-				sent += 1
 				unless write(c)
 					break
 				end
+				sent += 1
 			end
 			sent
 		ensure
