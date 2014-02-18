@@ -51,8 +51,11 @@ module I2CDevice::Driver
 			@speed = opts[:speed] || 100 # kHz but insane
 			@clock = 1.0 / (@speed * 1000)
 
-			GPIO.export(@scl)
-			GPIO.export(@sda)
+			begin
+				GPIO.export(@scl)
+				GPIO.export(@sda)
+			rescue Errno::EBUSY => e
+			end
 			ObjectSpace.define_finalizer(self, self.class.finalizer([@scl, @sda]))
 			begin
 				GPIO.direction(@scl, :in)
@@ -66,14 +69,16 @@ module I2CDevice::Driver
 			ret = ""
 			start_condition
 			unless write( (address << 1) + 0)
+				stop_condition
 				raise I2CDevice::I2CIOError, "Unknown slave device (address:#{address})"
 			end
 			write(param)
 			start_condition
-			write( (address << 1) + 1)
-			unless write( (address << 1) + 0)
+			unless write( (address << 1) + 1)
+				stop_condition
 				raise I2CDevice::I2CIOError, "Unknown slave device (address:#{address})"
 			end
+			write( (address << 1) + 0)
 			length.times do |n|
 				ret << read(n != length - 1).chr
 			end
@@ -86,6 +91,7 @@ module I2CDevice::Driver
 			start_condition
 			write( (address << 1) + 0)
 			unless write( (address << 1) + 0)
+				stop_condition
 				raise I2CDevice::I2CIOError, "Unknown slave device (address:#{address})"
 			end
 			data.each do |c|
