@@ -45,21 +45,23 @@ module I2CDevice::Driver
 			end
 		end
 
+		attr_reader :sda, :scl, :speed
+
 		def initialize(opts={})
 			@sda = opts[:sda] or raise "opts[:sda] = [gpio pin number] is requied"
 			@scl = opts[:scl] or raise "opts[:scl] = [gpio pin number] is requied"
-			@speed = opts[:speed] || 100 # kHz but insane
+			@speed = opts[:speed] || 1 # kHz but insane
 			@clock = 1.0 / (@speed * 1000)
 
 			begin
-				GPIO.export(@scl)
 				GPIO.export(@sda)
+				GPIO.export(@scl)
 			rescue Errno::EBUSY => e
 			end
 			ObjectSpace.define_finalizer(self, self.class.finalizer([@scl, @sda]))
 			begin
-				GPIO.direction(@scl, :in)
 				GPIO.direction(@sda, :in)
+				GPIO.direction(@scl, :in)
 			rescue Errno::EACCES => e # writing to gpio after export is failed in a while
 				retry
 			end
@@ -78,7 +80,6 @@ module I2CDevice::Driver
 				stop_condition
 				raise I2CDevice::I2CIOError, "Unknown slave device (address:#{address})"
 			end
-			write( (address << 1) + 0)
 			length.times do |n|
 				ret << read(n != length - 1).chr
 			end
@@ -89,7 +90,6 @@ module I2CDevice::Driver
 		def i2cset(address, *data)
 			sent = 0
 			start_condition
-			write( (address << 1) + 0)
 			unless write( (address << 1) + 0)
 				stop_condition
 				raise I2CDevice::I2CIOError, "Unknown slave device (address:#{address})"
@@ -101,34 +101,40 @@ module I2CDevice::Driver
 				end
 			end
 			stop_condition
+			sent
 		end
 
 		private
 
 		def start_condition
+			sleep @clock
+			GPIO.direction(@sda, :in)
 			GPIO.direction(@scl, :in)
-			if GPIO.read(@scl) == false
-				raise I2CDevice::I2BUSBusy, "BUS is busy"
+			if GPIO.read(@scl) == 0
+				raise I2CDevice::I2CBUSBusy, "BUS is busy"
 			end
 
-			GPIO.direction(@sda, :high)
+			sleep @clock / 2
 			GPIO.direction(@scl, :high)
-			sleep @clock
-			GPIO.write(@sda, false)
+			sleep @clock / 2
+			GPIO.direction(@sda, :low)
 			sleep @clock
 		end
 
 		def stop_condition
-			GPIO.direction(@sda, :high)
-			GPIO.direction(@scl, :high)
-			sleep @clock
-			GPIO.write(@sda, true)
-			sleep @clock
+			GPIO.direction(@scl, :low)
+			sleep @clock / 2
+			GPIO.direction(@sda, :low)
+			sleep @clock / 2
+			GPIO.direction(@scl, :in)
+			sleep @clock / 2
+			GPIO.direction(@sda, :in)
+			sleep @clock / 2
 		end
 
 		def write(byte)
 			GPIO.direction(@scl, :low)
-			GPIO.direction(@sda, :high)
+			sleep @clock
 
 			7.downto(0) do |n|
 				GPIO.write(@sda, byte[n] == 1)
@@ -138,15 +144,15 @@ module I2CDevice::Driver
 				end
 				sleep @clock
 				GPIO.direction(@scl, :low)
+				GPIO.write(@sda, false)
 				sleep @clock
 			end
 
 			GPIO.direction(@sda, :in)
-			GPIO.write(@scl, true)
-			sleep @clock / 2.0
-			ack = GPIO.read(@sda) == 0
-			sleep @clock / 2.0
 			GPIO.direction(@scl, :in)
+			sleep @clock / 2
+			ack = GPIO.read(@sda) == 0
+			sleep @clock / 2
 			while GPIO.read(@scl) == 0
 				sleep @clock
 			end
@@ -158,13 +164,14 @@ module I2CDevice::Driver
 			ret = 0
 
 			GPIO.direction(@scl, :low)
+			sleep @clock
 			GPIO.direction(@sda, :in)
 
 			8.times do
 				GPIO.direction(@scl, :in)
-				sleep @clock / 2.0
+				sleep @clock / 2
 				ret = (ret << 1) | GPIO.read(@sda)
-				sleep @clock / 2.0
+				sleep @clock / 2
 				GPIO.direction(@scl, :low)
 				sleep @clock
 			end
