@@ -407,20 +407,20 @@ describe I2CDevice::Driver::GPIO do
 									@timeline.mark(8 - count[:high], :bottom)
 									data = (data << 1) | @timeline.state(@driver.sda)
 								when state == 0 && count[:high] == 8
-									@received << data
 									if @received.size < @max_receive
+										@received << data
 										# ack
 										@timeline.default(@driver.sda, 0)
 									end
 								when state == 1 && count[:high] == 9
-									@timeline.mark(@received.size < @max_receive ? 'ack' : 'nack')
+									@timeline.mark(@received.size <= @max_receive ? 'ack' : 'nack')
 								when state == 0 && count[:high] == 9
 									# reset
 									data = 0
 									count[:high] = 0
 									count[:low] = 0
 									@timeline.default(@driver.sda, 1)
-									unless @received.size < @max_receive
+									unless @received.size <= @max_receive
 										@status = :stop
 									end
 								end
