@@ -78,7 +78,7 @@ module I2CDevice::Driver
 				raise I2CDevice::I2CIOError, "Unknown slave device (address:#{address})"
 			end
 			write(param)
-			stop_condition
+			stop_condition # AVR stucked with SCL low without this (Does not AVR suppor Sr condition?)
 			start_condition
 			unless write( (address << 1) + 1)
 				raise I2CDevice::I2CIOError, "Unknown slave device (address:#{address})"
