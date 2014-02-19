@@ -33,4 +33,6 @@ RDoc::Task.new do |rdoc|
 		"README.md",
 		"lib/**/*.rb"
 	)
+	# --format=
+	# rdoc.generator = 'bootstrap'
 end

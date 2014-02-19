@@ -24,7 +24,7 @@ class I2CDevice::AQM0802A < I2CDevice::HD44780
 	end
 
 
-	# must set is = 1 before call
+	# Must set is = 1 by function_set before call.
 	def internal_osc_frequency(bs, f)
 		raise "is must be 1" unless @is == 1
 		f &= 0b111
@@ -47,7 +47,7 @@ class I2CDevice::AQM0802A < I2CDevice::HD44780
 		sleep 300e-3
 	end
 
-	# is : instruction set 1: extension, 0: normal
+	# <tt>is</tt> :: [Integer]  Instruction set 1: extension, 0: normal
 	def function_set(dl, n, f, is)
 		@is = is
 		i2cset(0, 0b00100000 | (dl<<4) | (n<<3) | (f<<2) | (is))

@@ -2,20 +2,23 @@
 
 require "i2c"
 
+# Analog Devices ADT7410 (temperture sensor)
+# http://www.analog.com/en/mems-sensors/digital-temperature-sensors/adt7410/products/product.html
 class I2CDevice::ADT7410 < I2CDevice
-	OPERATION_MODE = {
+	
+	OPERATION_MODE = { # :nodoc:
 		0b00 => :continuous_conversion,
 		0b01 => :one_shot,
 		0b10 => :one_sps_mode,
 		0b11 => :shutdown,
 	}
 
-	INT_CT_MODE = {
+	INT_CT_MODE = { # :nodoc:
 		0 => :interrupt_mode,  
 		1 => :comparator_mode,
 	}
 
-	RESOLUTION = {
+	RESOLUTION = { # :nodoc:
 		0 => 13,
 		1 => 16,
 	}

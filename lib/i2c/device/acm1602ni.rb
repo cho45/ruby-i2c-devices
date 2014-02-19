@@ -2,7 +2,8 @@
 
 require "i2c/device/hd44780"
 
-# Note: This device only run under speed=50kHz
+# 16x02 LCD module with I2C.
+# Note: This device only run under speed=50kHz.
 # http://akizukidenshi.com/catalog/g/gP-05693/
 class I2CDevice::ACM1602NI < I2CDevice::HD44780
 	def initialize(args={})
