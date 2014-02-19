@@ -180,6 +180,7 @@ describe I2CDevice::Driver::GPIO do
 		@driver = I2CDevice::Driver::GPIO.new(
 			sda: 23,
 			scl: 24,
+			speed: 1,
 		)
 		@timeline.events.clear
 		@timeline.default(@driver.scl, 1)
@@ -328,6 +329,12 @@ describe I2CDevice::Driver::GPIO do
 	end
 
 	describe "i2c abstract interface:" do
+		it "should initialize with sda, scl properties" do
+			expect { I2CDevice::Driver::GPIO.new() }.to raise_error(/required/)
+			expect { I2CDevice::Driver::GPIO.new(sda: 1) }.to raise_error
+			expect { I2CDevice::Driver::GPIO.new(sda: 1, scl: 2) }.not_to raise_error
+		end
+
 		context "unknown slave address:" do
 			describe "i2cset" do
 				it "should throw exception on unknown slave address" do
@@ -498,6 +505,8 @@ describe I2CDevice::Driver::GPIO do
 
 					expect(@timeline.state(@driver.scl)).to be(1)
 					expect(@timeline.state(@driver.sda)).to be(1)
+
+					@timeline.dump
 				end
 			end
 		end

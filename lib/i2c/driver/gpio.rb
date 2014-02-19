@@ -35,7 +35,7 @@ module I2CDevice::Driver
 
 		def self.write(pin, val)
 			File.open("/sys/class/gpio/gpio#{pin}/value", "w") do |f|
-				f.syswrite(val ? "1" : "0")
+				f.syswrite(val && val.nonzero?? "1" : "0")
 			end
 		end
 
@@ -50,8 +50,8 @@ module I2CDevice::Driver
 		attr_reader :sda, :scl, :speed
 
 		def initialize(opts={})
-			@sda = opts[:sda] or raise "opts[:sda] = [gpio pin number] is requied"
-			@scl = opts[:scl] or raise "opts[:scl] = [gpio pin number] is requied"
+			@sda = opts[:sda] or raise "opts[:sda] = [gpio pin number] is required"
+			@scl = opts[:scl] or raise "opts[:scl] = [gpio pin number] is required"
 			@speed = opts[:speed] || 1 # kHz but insane
 			@clock = 1.0 / (@speed * 1000)
 
@@ -78,7 +78,7 @@ module I2CDevice::Driver
 				raise I2CDevice::I2CIOError, "Unknown slave device (address:#{address})"
 			end
 			write(param)
-			stop_condition # AVR stucked with SCL low without this (Does not AVR suppor Sr condition?)
+			stop_condition # AVR stucked with SCL low without this (Does not AVR support Sr condition?)
 			start_condition
 			unless write( (address << 1) + 1)
 				raise I2CDevice::I2CIOError, "Unknown slave device (address:#{address})"
