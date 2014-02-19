@@ -12,6 +12,10 @@ RSpec::Core::RakeTask.new(:spec)
 task :default => :spec
 
 task :release do
+	tags = `git tag`.split(/\n/)
+	if tags.include? I2CDevice::VERSION
+		raise "Already exist tag #{I2CDevice::VERSION}"
+	end
 	sh %{gem build i2c-devices.gemspec}
 	sh %{gem push i2c-devices-#{I2CDevice::VERSION}.gem}
 	sh %{git add -u}
