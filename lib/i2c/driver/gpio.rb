@@ -5,7 +5,7 @@ Generic software I2C Driver based on /sys/class/gpio.
 THIS MODULE WORKS WITH VERY SLOW SPEED ABOUT JUST 1kHz (normaly 100kHz).
 =end
 
-class I2CDevice::Driver::GPIO < Base
+class I2CDevice::Driver::GPIO < I2CDevice::Driver::Base
 	@@DEBUG = false
 
 	def self.export(pin) #:nodoc: 

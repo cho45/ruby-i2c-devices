@@ -13,6 +13,7 @@ RSpec::Core::RakeTask.new(:spec)
 task :default => :spec
 
 task :release do
+	sh %{rspec}
 	tags = `git tag`.split(/\n/)
 	if tags.include? I2CDevice::VERSION
 		raise "Already exist tag #{I2CDevice::VERSION}"

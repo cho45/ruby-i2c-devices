@@ -88,7 +88,7 @@ class I2CDevice::HD44780 < I2CDevice
 		sleep 2.16e-3
 	end
 
-	alias clear_display clear
+	alias clear clear_display
 
 	def return_home
 		i2cset(0, 0b00000010)
