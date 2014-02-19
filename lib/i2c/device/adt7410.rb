@@ -2,7 +2,7 @@
 
 require "i2c"
 
-class ADT7410 < I2CDevice
+class I2CDevice::ADT7410 < I2CDevice
 	OPERATION_MODE = {
 		0b00 => :continuous_conversion,
 		0b01 => :one_shot,

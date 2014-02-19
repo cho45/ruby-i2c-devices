@@ -1,7 +1,7 @@
 
 require "i2c"
 
-class MPL115A2 < I2CDevice
+class I2CDevice::MPL115A2 < I2CDevice
 	def initialize(args={})
 		args[:address] = 0x60
 		super

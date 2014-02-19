@@ -1,3 +1,4 @@
+require 'rdoc/task'
 require 'rspec/core/rake_task'
 require 'pathname'
 
@@ -23,4 +24,13 @@ task :release do
 	sh %{git tag #{I2CDevice::VERSION}}
 	sh %{git push}
 	sh %{git push --tags}
+end
+
+
+RDoc::Task.new do |rdoc|
+	rdoc.main = "README.md"
+	rdoc.rdoc_files.include(
+		"README.md",
+		"lib/**/*.rb"
+	)
 end

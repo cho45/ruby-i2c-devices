@@ -8,7 +8,7 @@ require "tempfile"
 require "i2c/device/hd44780"
 require "i2c/driver/i2c-dev"
 
-describe HD44780 do
+describe I2CDevice::HD44780 do
 	before do
 		@i2cout = ""
 		@i2cin  = ""
@@ -41,7 +41,7 @@ describe HD44780 do
 
 	describe "#initialize_lcd" do
 		it "should initialize lcd" do
-			lcd = HD44780.new(address: 0x10, driver: @driver)
+			lcd = I2CDevice::HD44780.new(address: 0x10, driver: @driver)
 
 			expect(@i2cout.unpack("C*")).to eq([
 				0b00000000,
@@ -62,7 +62,7 @@ describe HD44780 do
 
 	describe "#put_line" do
 		it "should be put_line 1/2" do
-			lcd = HD44780.new(address: 0x10, driver: @driver)
+			lcd = I2CDevice::HD44780.new(address: 0x10, driver: @driver)
 
 			@i2cout.clear
 
@@ -122,7 +122,7 @@ describe HD44780 do
 
 	describe "#define_character" do
 		it "should define character" do
-			lcd = HD44780.new(address: 0x10, driver: @driver)
+			lcd = I2CDevice::HD44780.new(address: 0x10, driver: @driver)
 
 			@i2cout.clear
 

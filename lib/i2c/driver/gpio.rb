@@ -1,11 +1,12 @@
 require "i2c"
+require "i2c/driver"
 =begin
 Generic software I2C Driver based on /sys/class/gpio.
 THIS MODULE WORKS WITH VERY SLOW SPEED ABOUT JUST 1kHz (normaly 100kHz).
 =end
 
 module I2CDevice::Driver
-	class GPIO
+	class GPIO < Base
 		@@DEBUG = false
 
 		def self.export(pin)

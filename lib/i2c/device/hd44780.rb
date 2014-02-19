@@ -3,7 +3,7 @@
 require "i2c"
 
 # I2C interface with HD44780 compatible commands
-class HD44780 < I2CDevice
+class I2CDevice::HD44780 < I2CDevice
 	MAP = Hash[
 		[
 			"｡｢｣､・ｦｧｨｩｪｫｬｭｮｯｰｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝﾞﾟ".split(//).map {|c|

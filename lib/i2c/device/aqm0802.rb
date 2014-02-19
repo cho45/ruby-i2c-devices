@@ -3,7 +3,7 @@
 require "i2c"
 require "i2c/device/hd44780"
 
-class AQM0802A < HD44780
+class I2CDevice::AQM0802A < I2CDevice::HD44780
 	def initialize(args={})
 		args[:address] ||= 0x3e
 		super

@@ -1,8 +1,9 @@
 
 require "i2c"
+require "i2c/driver"
 
 module I2CDevice::Driver
-	class I2CDev
+	class I2CDev < Base
 		# ioctl command
 		# Ref. https://www.kernel.org/pub/linux/kernel/people/marcelo/linux-2.4/include/linux/i2c.h
 		I2C_RETRIES     = 0x0701
