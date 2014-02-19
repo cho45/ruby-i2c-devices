@@ -16,6 +16,8 @@ Gem::Specification.new do |s|
 	s.homepage      = 'https://github.com/cho45/ruby-i2c-devices'
 	s.license       = 'MIT'
 	s.require_paths = ["lib"]
+	s.extra_rdoc_files = ['README.md']
+	s.rdoc_options << '--main' << 'README.md'
 
 	s.add_development_dependency "bundler", "~> 1.5"
 	s.add_development_dependency "rake"
