@@ -4,7 +4,7 @@ $LOAD_PATH.unshift "lib"
 
 require "i2c/device/mpl115a2"
 
-mpl = MPL115A2.new
+mpl = I2CDevice::MPL115A2.new
 
 loop do
 	p mpl.calculate_hPa

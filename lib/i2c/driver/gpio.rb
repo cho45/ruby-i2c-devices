@@ -35,7 +35,7 @@ class I2CDevice::Driver::GPIO < I2CDevice::Driver::Base
 
 	def self.write(pin, val) #:nodoc: 
 		File.open("/sys/class/gpio/gpio#{pin}/value", "w") do |f|
-			f.syswrite(val && val.nonzero?? "1" : "0")
+			f.syswrite(val ? "1" : "0")
 		end
 	end
 

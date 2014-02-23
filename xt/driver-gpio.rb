@@ -13,22 +13,22 @@ driver = I2CDevice::Driver::GPIO.new(
 )
 
 
-device = I2CDevice.new(address: 0x20, driver: driver)
-loop do
-	seq = Array.new(8) { rand(0x10) }
-	seq = (0..7).map {|n| 0x10 + n }
-	seq = (1..10).to_a
-	p seq
-	p device.i2cset(0x00, *seq)
-	# p device.i2cget(0x00, 8).unpack("C*")
-
-	exit 1
-	sleep 1
-end
-
-#mpl = MPL115A2.new(driver: driver)
+#device = I2CDevice.new(address: 0x20, driver: driver)
 #loop do
-#	p mpl.calculate_hPa
+#	seq = Array.new(8) { rand(0x10) }
+#	seq = (0..7).map {|n| 0x10 + n }
+#	seq = (1..10).to_a
+#	p seq
+#	p device.i2cset(0x00, *seq)
+#	# p device.i2cget(0x00, 8).unpack("C*")
+#
+#	exit 1
 #	sleep 1
 #end
+
+mpl = I2CDevice::MPL115A2.new(driver: driver)
+loop do
+	p mpl.calculate_hPa
+	sleep 1
+end
 
