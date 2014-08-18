@@ -27,7 +27,7 @@ or pre-defiend device driver class:
 ```
 require "i2c/device/acm1602ni"
 
-lcd = ACM1602NI.new
+lcd = I2CDevice::ACM1602NI.new
 
 lcd.put_line(0, "0123456789ABCDEF")
 ```
@@ -39,7 +39,7 @@ with driver class
 require "i2c/device/mpl115a2"
 require "i2c/driver/i2c-dev"
 
-mpl = MPL115A2.new(driver: I2CDevice::Driver::I2CDev.new("/dev/i2c-0"))
+mpl = I2CDevice::MPL115A2.new(driver: I2CDevice::Driver::I2CDev.new("/dev/i2c-0"))
 p mpl.calculate_hPa
 ```
 
@@ -49,7 +49,7 @@ or GPIO backend driver (this is very slow)
 require "i2c/device/mpl115a2"
 require "i2c/driver/gpio"
 
-mpl = MPL115A2.new(driver: I2CDevice::Driver::GPIO.new(
+mpl = I2CDevice::MPL115A2.new(driver: I2CDevice::Driver::GPIO.new(
 	sda: 23, # pin 16 in raspberry pi
 	scl: 24, # pin 18 in raspberry pi
 ))
