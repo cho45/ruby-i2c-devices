@@ -36,7 +36,7 @@ class I2CDevice::Driver::I2CDev < I2CDevice::Driver::Base
 	def i2cget(address, param, length)
 		i2c = File.open(@path, "r+")
 		i2c.ioctl(I2C_SLAVE, address)
-		i2c.syswrite(param.chr)
+		i2c.syswrite(param.chr) unless param.nil?
 		ret = i2c.sysread(length)
 		i2c.close
 		ret
