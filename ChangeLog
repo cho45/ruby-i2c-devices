@@ -1,3 +1,11 @@
+2015-08-14  SATOH Hiroh <cho45@lowreal.net>
+
+	* 0.0.5:
+	[MOD] i2cget acceprt nil as param (by hotchpotch)
+	[ADD] add device HDC1000 (by hotchpotch)
+	[FIX] fix device AQM0802a (by hotchpotch)
+
+
 2014-02-20  SATOH Hiroh <cho45@lowreal.net>
 
 	* 0.0.1: initial release

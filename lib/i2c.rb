@@ -1,6 +1,6 @@
 # Generic abstract class for I2C manipulation.
 class I2CDevice
-	VERSION = "0.0.4"
+	VERSION = "0.0.5"
 
 	# Super class of all of this library.
 	class I2CException < Exception; end
