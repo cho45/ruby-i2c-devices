@@ -18,9 +18,13 @@ class I2CDevice::Driver::I2CDev < I2CDevice::Driver::Base
 
 	# This depends on /dev/i2c-* (i2c-dev) feature on Linux. You may load i2c-dev kernel module.
 	# <tt>path</tt> :: [String] Path to /dev/i2c-* file.
-	#
+	# <tt>force</tt> :: [Boolean] Force the driver to read or set values even if the device is in use. 
+  #                   This is dangerous, as it can seriously confuse the kernel driver in question. 
+  #                   It can also cause i2cget and i2cset to writ to the wrong register. 
+  #                   Use at your own risk and only if you know what you're doing.
+  #
 	# If _path_ is not specified, this method use <tt>Dir.glob("/dev/i2c-*").last</tt> for _path_
-	def initialize(path=nil)
+	def initialize(path=nil, force=false)
 		if path.nil?
 			path = Dir.glob("/dev/i2c-*").sort.last
 		end
@@ -30,12 +34,13 @@ class I2CDevice::Driver::I2CDev < I2CDevice::Driver::Base
 		end
 
 		@path = path
+    @slave_command = force ? I2C_SLAVE_FORCE : I2C_SLAVE
 	end
 
 	# Interface of I2CDevice::Driver
 	def i2cget(address, param, length)
 		i2c = File.open(@path, "r+")
-		i2c.ioctl(I2C_SLAVE, address)
+		i2c.ioctl(@slave_command, address)
 		i2c.syswrite(param.chr) unless param.nil?
 		ret = i2c.sysread(length)
 		i2c.close
@@ -47,7 +52,7 @@ class I2CDevice::Driver::I2CDev < I2CDevice::Driver::Base
 	# Interface of I2CDevice::Driver
 	def i2cset(address, *data)
 		i2c = File.open(@path, "r+")
-		i2c.ioctl(I2C_SLAVE, address)
+		i2c.ioctl(@slave_command, address)
 		i2c.syswrite(data.pack("C*"))
 		i2c.close
 	rescue Errno::EIO => e
