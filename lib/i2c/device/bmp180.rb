@@ -1,13 +1,11 @@
 require 'i2c'
-#require 'i2c/driver'
-#require 'i2c/driver/i2c-dev'
 
 # Implements the I2C-Device BMP085/BMP180
-#
-# Currently this code was tested on a Banana Pi with a BMP185 device. It should work on a Raspberry or any other Linux with I2C-Dev
 # This code was inspired by https://github.com/adafruit/Adafruit_Python_BMP
 #
-# TODO commit to https://github.com/cho45/ruby-i2c-devices
+# Datasheet: https://www.adafruit.com/datasheets/BST-BMP180-DS000-09.pdf
+#
+# Currently this code was tested on a Banana Pi with a BMP185 device. It should work on a Raspberry or any other Linux with I2C-Dev
 #
 # ==Example
 #   Using i2c-2 device (e.g. if you using a banana pi)
@@ -19,6 +17,7 @@ require 'i2c'
 #   sleep 1
 #   m_above_sealevel = 500 # position realtive to sealevel in m
 #   puts "#{bmp.read_sealevel_pressure(m_above_sealevel) / 100.0}hPa rel"
+#
 class I2CDevice::Bmp180 < I2CDevice
     # BMP085 default address.
     BMP085_I2CADDR           = 0x77
@@ -89,17 +88,6 @@ class I2CDevice::Bmp180 < I2CDevice
         return calc_real_temperature(ut), calc_real_pressure(ut, up)
     end
 
-    # calculate the current altitue from the given pressure at sealevel and the current pressure
-    #
-    # ==params
-    #  * sealevel_pa : curren pressure at sealevel in Pa defaults to 101325.0
-    def read_altitude(sealevel_pa = 101325.0)
-        pressure = read_pressure().to_f
-        altitude = 44330.0 * (1.0 - ((pressure / sealevel_pa) ** (1.0/5.255)))
-
-        return altitude
-    end
-
     # calculate the current pressure at sealevel from the current relative pressure and the gitven altitude
     #
     # ==params
@@ -118,6 +106,10 @@ class I2CDevice::Bmp180 < I2CDevice
         return pressure.to_f / ((1.0 - altitude.to_f / 44330.0) ** 5.255)
     end
     
+    # get the calibration values
+    #
+    # ==return
+    #  array of calibration data
     def get_cal
         return @cal_AC1, @cal_AC2, @cal_AC3, @cal_AC4, @cal_AC5, @cal_AC6, @cal_B1, @cal_B2, @cal_MB, @cal_MC, @cal_MD
     end
