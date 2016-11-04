@@ -29,7 +29,7 @@ describe I2CDevice::HD44780 do
 		@temp = Tempfile.new("i2c")
 		file = nil
 		open = File.method(:open)
-		File.stub(:open) do
+		allow(File).to receive(:open) do
 			file = open.call(@temp.path, "r+")
 			file.define_singleton_method(:ioctl) {|cmd,arg| ioctl.call(ioctl) }
 			file.define_singleton_method(:syswrite) {|str| syswrite.call(str) }

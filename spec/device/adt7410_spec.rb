@@ -12,7 +12,7 @@ require "spec/mocki2cdevice"
 describe I2CDevice::ADT7410 do
 	before do
 		@mock = MockI2CDevice.new
-		File.stub(:open) do
+		allow(File).to receive(:open) do
 			@mock.open
 		end
 		@driver = I2CDevice::Driver::I2CDev.new(@mock.path)
