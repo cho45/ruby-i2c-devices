@@ -64,13 +64,13 @@ class I2CDevice::GridEYE < I2CDevice
 		value =
 			case fps
 			when 1
-				1
+				FRAME_RATE_1FPS
 			when 10
-				0
+				FRAME_RATE_10FPS
 			else
 				raise "Invalid FPS value"
 			end
-		i2cset(FRAMERATE_REGISTER, value)
+		i2cset(FRAME_RATE_REGISTER, value)
 	end
 
 	def set_average_mode(average)
