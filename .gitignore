@@ -1,3 +1,4 @@
 *.gem
 sketch.rb
 html
+*.swp
