@@ -4,8 +4,6 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 require "bundler/setup"
 require 'i2c'
-require "i2c/driver/i2c-dev"
-require "i2c/device/si70xx"
 
 require "irb"
 IRB.start
