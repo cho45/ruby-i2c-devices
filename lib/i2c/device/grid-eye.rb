@@ -46,7 +46,7 @@ class I2CDevice::GridEYE < I2CDevice
 	TEMPERATURE_REGISTER = 0x80
 
 	def initialize(args={})
-		args[:address] = 0x68
+		args[:address] ||= 0x68
 		super
 	end
 
