@@ -67,7 +67,6 @@ class I2CDevice::Bme280 < I2CDevice
 	end
 
 	def read_calibration
-		p i2cget(0x88, 24).unpack("v*")
 		# s< = little endian signed 16bit
 		# S< = little endian unsigned 16bit
 		# c = signed 8bit
@@ -142,7 +141,7 @@ class I2CDevice::Bme280 < I2CDevice
 	end
 
 	def write_ctrl_meas(temp_oversamples=1, pressure_oversamples=1, mode=MODE_NORMAL)
-		num = (osrs_t << 7) | (osrs_p << 2) | mode
+		num = (temp_oversamples << 7) | (pressure_oversamples << 2) | mode
 		i2cset(REG_CTRL_MEAS, num)
 	end
 
@@ -155,12 +154,12 @@ class I2CDevice::Bme280 < I2CDevice
 	end
 
 	def write_ctrl_hum(oversamples=1)
-		i2cset(REG_CTRL_HUM,  num)
+		i2cset(REG_CTRL_HUM,  oversamples)
 	end
 
 	def read_id
 		# BME280 = 0x60
-		# BMP280 = 0x58
+		# BMP280 = 0x56 0x57 0x58
 		i2cget(REG_ID, 1).ord.to_s(16)
 	end
 
