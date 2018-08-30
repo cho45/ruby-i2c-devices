@@ -176,7 +176,6 @@ class I2CDevice::Bme280 < I2CDevice
 	end
 
 	def compensate_P(adc_P, t_fine)
-		p t_fine
 		var1 = (t_fine) - 128000
 		var2 = var1 * var1 * @dig_P6
 		var2 = var2 + ((var1*@dig_P5)<<17)
