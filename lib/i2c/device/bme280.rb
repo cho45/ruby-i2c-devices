@@ -97,19 +97,22 @@ class I2CDevice::Bme280 < I2CDevice
 			"s<", # P9
 		].join)
 
-		@dig_H1,
+		@dig_H1, = *i2cget(0xA1, 1).unpack("C")
 		@dig_H2,
 		@dig_H3,
-		@dig_H4,
-		@dig_H5,
-		@dig_H6 = *i2cget(0xA1, 0xE6-0xA1).unpack([
-			"C", # H1
+		e4,
+		e5,
+		e6,
+		@dig_H6 = *i2cget(0xE1, 8).unpack([
 			"s<", # H2
 			"C", # H3
-			"s<", # H4
-			"s<", # H5
+			"C", # H4 (0xE4)
+			"C", # H4/H5 (0xE5)
+			"C", # H5 (0xE6)
 			"c", # H6
 		].join(""))
+		@dig_H4 = e4 << 4 | e5 & 0x0F
+		@dig_H5 = e6 << 4 | e5 >> 4
 		nil
 	end
 
@@ -199,10 +202,12 @@ class I2CDevice::Bme280 < I2CDevice
 
 	def compensate_H(adc_H, t_fine)
 		v_x1_u32r = (t_fine - (76800))
-		v_x1_u32r = (((((adc_H << 14) - ((@dig_H4) << 20) - ((@dig_H5) * v_x1_u32r)) + (16384)) >> 15) * (((((((v_x1_u32r * (@dig_H6)) >> 10) * (((v_x1_u32r * (@dig_H3)) >> 11) + (32768))) >> 10) + (2097152)) * (@dig_H2) + 8192) >> 14))
-		v_x1_u32r = (v_x1_u32r - (((((v_x1_u32r >> 15) * (v_x1_u32r >> 15)) >> 7) * (@dig_H1)) >> 4))
-		v_x1_u32r = (v_x1_u32r < 0 ? 0 : v_x1_u32r)
-		v_x1_u32r = (v_x1_u32r > 419430400 ? 419430400 : v_x1_u32r)
+		v_x1_u32r = (((((adc_H << 14) - ((@dig_H4) << 20)- ((@dig_H5) * v_x1_u32r)) +
+			(16384)) >> 15) * (((((((v_x1_u32r * (@dig_H6)) >> 10) * (((v_x1_u32r * (@dig_H3)) >> 11) + (32768))) >> 10) + (2097152)) * (@dig_H2) + 8192) >> 14));
+		v_x1_u32r = (v_x1_u32r- (((((v_x1_u32r >> 15) * (v_x1_u32r >> 15)) >> 7) * (@dig_H1)) >> 4));
+		v_x1_u32r = (v_x1_u32r < 0 ? 0 : v_x1_u32r);
+		v_x1_u32r = (v_x1_u32r > 419430400 ? 419430400 : v_x1_u32r);
+
 		q22_10 = (v_x1_u32r>>12)
 		# Q22.10 to %RH
 		q22_10 / 1024.to_f
